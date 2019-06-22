@@ -63,8 +63,6 @@ app.get('/api/user', (req, res) => {
 })
 
 app.get('/api/users', (req, res) => {
-    // localhost:3000/api/users/?skip=1&limit=2&order=asc
-    // skip, order and limit are optional params
     let skip = parseInt(req.query.skip);
     let limit = parseInt(req.query.limit);
     let order = req.query.order;
@@ -76,6 +74,16 @@ app.get('/api/users', (req, res) => {
 
         res.status(200).json(users);
     });
+})
+
+app.get('/api/userPosts', (req, res) => {
+    Book.find({ ownerId: req.query.userId }).exec((err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.send(doc);
+    })
 })
 
 // POST
