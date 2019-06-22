@@ -67,8 +67,33 @@ app.post('/api/book', (req, res) => {
 })
 
 // UPDATE
+app.put('/api/updateBook', (req, res) => {
+    // Params: searchBy, payloadChange, should return modified file, callback()
+    Book.findByIdAndUpdate(req.body._id, req.body, { new: true }, (err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json({
+            success: true,
+            doc
+        })
+    })
+})
 
 // DELETE
+app.delete('/api/deleteBook', (req, res) => {
+    let bookId = req.query.id;
+    Book.findByIdAndRemove(bookId, (err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json({
+            success: true
+        })
+    })
+})
 
 const port = process.env.PORT || 3000;
 
