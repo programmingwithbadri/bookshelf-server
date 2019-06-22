@@ -7,6 +7,7 @@ const config = require('./config/config').get(process.env.NODE_ENV);
 
 const { User } = require('./models/user');
 const { Book } = require('./models/book');
+const { auth } = require('./middleware/auth');
 
 const app = express();
 
@@ -22,6 +23,16 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // GET
+app.get('/api/logout', auth, (req, res) => {
+    req.user.deleteToken(req.token, (err, user) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.sendStatus(204);
+    })
+})
+
 app.get('/api/book', (req, res) => {
     let bookId = req.query.id;
 
@@ -129,7 +140,7 @@ app.post('/api/login', (req, res) => {
         })
 
         user.comparePassword(req.body.password, (err, isMatch) => {
-            if (!isMatch) return res.status(404).json({
+            if (!isMatch) return res.status(401).json({
                 isAuth: false,
                 message: "Incorrect password"
             })

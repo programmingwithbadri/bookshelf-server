@@ -74,6 +74,26 @@ userSchema.methods.generateToken = function (cb) {
     })
 }
 
+// Compare the token from browser for authentication
+userSchema.statics.findByToken = function (token, cb) {
+    var user = this;
+    jwt.verify(token, config.SECRET, (err, decode) => {
+        user.findOne({ "_id": decode, "token": token }, (err, user) => {
+            if (err) return cb(err);
+            cb(null, user);
+        })
+    })
+}
+
+// deletes the token from user database
+userSchema.methods.deleteToken = function (token, cb) {
+    var user = this;
+    user.update({ $unset: { token: 1 } }, (err, user) => {
+        if (err) return cb(err);
+        cb(null, user);
+    })
+}
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User }
