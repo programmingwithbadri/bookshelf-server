@@ -21,10 +21,57 @@ mongoose.connect(config.DATABASE, { useNewUrlParser: true, useCreateIndex: true 
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+// GET
+app.get('/api/book', (req, res) => {
+    let bookId = req.query.id;
+
+    Book.findById(bookId, (err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json(doc);
+    });
+})
+
+app.get('/api/books', (req, res) => {
+    // localhost:3000/api/books/?skip=1&limit=2&order=asc
+    // skip, order and limit ar eoptional params
+    let skip = parseInt(req.query.skip);
+    let limit = parseInt(req.query.limit);
+    let order = req.query.order;
+
+    Book.find().skip(skip).sort({ _id: order }).limit(limit).exec((err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json(doc);
+    });
+})
+
+// POST
+app.post('/api/book', (req, res) => {
+    const book = new Book(req.body);
+
+    book.save((err, doc) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json({
+            post: true,
+            bookId: doc._id
+        })
+    })
+})
+
+// UPDATE
+
+// DELETE
 
 const port = process.env.PORT || 3000;
 
-
 app.listen(port, () => {
-    console.log("server is running")
+    console.log(`server is running at ${port}`)
 });
