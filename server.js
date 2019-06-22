@@ -23,6 +23,16 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // GET
+app.get('/api/auth', auth, (req,res) => {
+    res.status(200).json({
+        isAuth: true,
+        email: req.user.email,
+        id: req.user._id,
+        name: req.user.name,
+        lastname: req.user.lastname
+    })
+})
+
 app.get('/api/logout', auth, (req, res) => {
     req.user.deleteToken(req.token, (err, user) => {
         if (err) {
