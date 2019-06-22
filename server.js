@@ -36,7 +36,7 @@ app.get('/api/book', (req, res) => {
 
 app.get('/api/books', (req, res) => {
     // localhost:3000/api/books/?skip=1&limit=2&order=asc
-    // skip, order and limit ar eoptional params
+    // skip, order and limit are optional params
     let skip = parseInt(req.query.skip);
     let limit = parseInt(req.query.limit);
     let order = req.query.order;
@@ -47,6 +47,34 @@ app.get('/api/books', (req, res) => {
         }
 
         res.status(200).json(doc);
+    });
+})
+
+app.get('/api/user', (req, res) => {
+    const userId = req.query.id;
+    User.findById(userId, (err, users) => {
+        if (err) return res.status(400).json(err);
+
+        res.json({
+            name: doc.name,
+            lastname: doc.lastname
+        });
+    })
+})
+
+app.get('/api/users', (req, res) => {
+    // localhost:3000/api/users/?skip=1&limit=2&order=asc
+    // skip, order and limit are optional params
+    let skip = parseInt(req.query.skip);
+    let limit = parseInt(req.query.limit);
+    let order = req.query.order;
+
+    User.find().skip(skip).sort({ _id: order }).limit(limit).exec((err, users) => {
+        if (err) {
+            res.status(400).send(err);
+        }
+
+        res.status(200).json(users);
     });
 })
 
@@ -74,7 +102,7 @@ app.post('/api/register', (req, res) => {
                 success: false,
                 error: err
             })
-        } 
+        }
 
         res.status(200).json({
             success: true,
@@ -83,23 +111,23 @@ app.post('/api/register', (req, res) => {
     })
 })
 
-app.post('/api/login', (req,res) => {
+app.post('/api/login', (req, res) => {
     User.findOne({
         'email': req.body.email
     }, (err, user) => {
-        if(!user) return res.status(404).json({
-            isAuth : false,
+        if (!user) return res.status(404).json({
+            isAuth: false,
             message: "Email not found"
         })
 
         user.comparePassword(req.body.password, (err, isMatch) => {
-            if(!isMatch) return res.status(404).json({
-                isAuth : false,
+            if (!isMatch) return res.status(404).json({
+                isAuth: false,
                 message: "Incorrect password"
             })
 
             user.generateToken((err, user) => {
-                if(err) return res.status(400).json(err);
+                if (err) return res.status(400).json(err);
 
                 // setting the cookie in the user's browser and return data
                 res.cookie('auth', user.token).json({
