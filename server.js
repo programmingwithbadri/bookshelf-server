@@ -25,7 +25,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // GET
-app.get('/api/auth', auth, (req,res) => {
+app.get('/api/auth', auth, (req, res) => {
     res.status(200).json({
         isAuth: true,
         email: req.user.email,
@@ -75,12 +75,13 @@ app.get('/api/books', (req, res) => {
 
 app.get('/api/user', (req, res) => {
     const userId = req.query.id;
+
     User.findById(userId, (err, users) => {
         if (err) return res.status(400).json(err);
 
         res.json({
-            name: doc.name,
-            lastname: doc.lastname
+            name: users.name,
+            lastname: users.lastname
         });
     })
 })
