@@ -22,7 +22,7 @@ mongoose.connect(config.DATABASE, { useNewUrlParser: true, useCreateIndex: true 
 // Middlewares
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 // GET
 app.get('/api/auth', auth, (req, res) => {
@@ -138,7 +138,7 @@ app.post('/api/register', (req, res) => {
 
         res.status(200).json({
             success: true,
-            doc
+            user: doc
         })
     })
 })
@@ -147,7 +147,7 @@ app.post('/api/login', (req, res) => {
     User.findOne({
         'email': req.body.email
     }, (err, user) => {
-        if (!user) return res.status(404).json({
+        if (!user) return res.status(401).json({
             isAuth: false,
             message: "Email not found"
         })
