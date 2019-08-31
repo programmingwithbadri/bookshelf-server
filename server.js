@@ -162,7 +162,7 @@ app.post('/api/login', (req, res) => {
                 if (err) return res.status(400).json(err);
 
                 // setting the cookie in the user's browser and return data
-                res.cookie('auth', user.token, { maxAge: 900000, httpOnly: false}).json({
+                res.cookie('auth', user.token, { secure:true, maxAge: 900000, httpOnly: false}).json({
                     isAuth: true,
                     id: user._id,
                     email: user.email
